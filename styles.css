@@ -1,0 +1,44 @@
+.user-message-buttons {
+  position: absolute;
+  bottom: -40px;  /* Position below the text */
+  right: 0;
+  display: flex;
+  gap: 8px;
+  transition: opacity 300ms ease-in-out;
+  opacity: 0;
+  padding: 8px;
+}
+
+/* Show buttons on hover */
+div[data-content="user-message"]:hover .user-message-buttons {
+  opacity: 1;
+}
+
+/* Base styles for all copy buttons */
+.copy-button, .copy-ai-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
+  color: currentColor;
+  border-radius: 12px;
+}
+
+/* Hover effect only for AI copy button */
+.copy-ai-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark .copy-ai-button:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* SVG sizing for all buttons */
+.copy-button svg, .copy-ai-button svg {
+  width: 14px;
+  height: 13px;
+}
