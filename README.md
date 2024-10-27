@@ -16,7 +16,7 @@ A browser extension for Microsoft Edge and Chrome that enhances the new Microsof
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/copilot-chat-copier.git
+git clone https://github.com/webisa/copilot-chat-copier.git
 ```
 
 2. Open Microsoft Edge and navigate to `edge://extensions/` or Chrome and navigate to `chrome://extensions/`
