@@ -335,6 +335,7 @@ function formatAIContent(contentDiv) {
                     }
                     break;
                 case 'ul':
+                case 'ol':
                     element.querySelectorAll('li').forEach(li => {
                         const liText = handleInlineFormatting(li);
                         formattedText.push(`- ${liText.trim()}`);
