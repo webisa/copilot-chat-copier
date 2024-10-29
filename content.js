@@ -306,6 +306,18 @@ function formatAIContent(contentDiv) {
                 case 'h2':
                     formattedText.push(`## ${element.textContent.trim()}`);
                     break;
+                case 'h3':
+                    formattedText.push(`### ${element.textContent.trim()}`);
+                    break;
+                case 'h4':
+                    formattedText.push(`#### ${element.textContent.trim()}`);
+                    break;
+                case 'h5':
+                    formattedText.push(`##### ${element.textContent.trim()}`);
+                    break;
+                case 'h6':
+                    formattedText.push(`###### ${element.textContent.trim()}`);
+                    break;
                 case 'div':
                     if (element.querySelector('table.t-table')) {
                         formattedText.push(processTable(element.querySelector('table.t-table')));
@@ -335,10 +347,10 @@ function formatAIContent(contentDiv) {
                     }
                     break;
                 case 'ul':
-                    element.querySelectorAll('li').forEach(li => {
-                        const liText = handleInlineFormatting(li);
-                        formattedText.push(`- ${liText.trim()}`);
-                    });
+                    formattedText.push(...processNestedList(element, 0, false));
+                    break;
+                case 'ol':
+                    formattedText.push(...processNestedList(element, 0, true));
                     break;
                 default:
                     formattedText.push(handleInlineFormatting(element));
@@ -349,6 +361,51 @@ function formatAIContent(contentDiv) {
     return formattedText.join('\n\n');
 }
 
+// Add this new helper function for processing nested lists
+function processNestedList(listElement, level, isOrdered = false) {
+    const formattedItems = [];
+    const indent = '  '.repeat(level);
+
+    listElement.querySelectorAll(':scope > li').forEach((li, index) => {
+        // Get direct text content
+        const liText = Array.from(li.childNodes)
+            .filter(node => node.nodeType === Node.TEXT_NODE || 
+                          (node.nodeType === Node.ELEMENT_NODE && 
+                           node.tagName.toLowerCase() !== 'ul' && 
+                           node.tagName.toLowerCase() !== 'ol'))
+            .map(node => handleInlineFormatting(node))
+            .join('')
+            .trim();
+
+        // Add the list item with proper formatting
+        if (liText) {
+            if (isOrdered) {
+                // Alternate between numbers and letters based on level
+                let marker;
+                if (level % 2 === 0) {
+                    // Even levels (0, 2, 4...) use numbers
+                    marker = `${index + 1}.`;
+                } else {
+                    // Odd levels (1, 3, 5...) use letters
+                    marker = `${String.fromCharCode(97 + index)}.`;
+                }
+                formattedItems.push(`${indent}${marker} ${liText}`);
+            } else {
+                formattedItems.push(`${indent}- ${liText}`);
+            }
+        }
+
+        // Process nested lists recursively
+        const nestedLists = li.querySelectorAll(':scope > ul, :scope > ol');
+        nestedLists.forEach(nestedList => {
+            const nestedIsOrdered = nestedList.tagName.toLowerCase() === 'ol';
+            const nestedItems = processNestedList(nestedList, level + 1, nestedIsOrdered);
+            formattedItems.push(...nestedItems);
+        });
+    });
+
+    return formattedItems;
+}
 // ============================
 // Observer and Initialization
 // ============================
@@ -521,3 +578,4 @@ initialize();
 
 // Set up periodic checking every 5 seconds
 setInterval(periodicCheck, 5000);
+
